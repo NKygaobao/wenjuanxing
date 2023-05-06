@@ -6,7 +6,7 @@ const rawQuestionList = [
     _id: 'q1',
     title: '问卷1',
     isPublished: false,
-    isStart: false,
+    isStart: true,
     answerCount: 4,
     createdAt: '2月10 12:22',
   },
