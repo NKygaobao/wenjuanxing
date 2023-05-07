@@ -1,6 +1,8 @@
 import React, { FC, useState } from 'react'
-import styles from './List.module.scss'
+import { Typography } from 'antd'
+import styles from './common.module.scss'
 import QuestionCard from '../../components/QuestionCard'
+const { Title } = Typography
 const rawQuestionList = [
   {
     _id: 'q1',
@@ -42,7 +44,7 @@ const List: FC = () => {
     <>
       <div className={styles.header}>
         <div className={styles.left}>
-          <h3>我的问卷</h3>
+          <Title level={3}>我的问卷</Title>
         </div>
         <div className={styles.right}>搜索</div>
       </div>
