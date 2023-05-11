@@ -10,6 +10,7 @@ import React, { lazy } from 'react'
 import List from '../pages/manage/List'
 import Trash from '../pages/manage/Trash'
 import Star from '../pages/manage/Star'
+import Text from '../pages/test/Test'
 
 const Edit = lazy(() => import(/* webpackChunkName: "editPage" */ '../pages/question/Edit'))
 const Stat = lazy(() => import(/* webpackChunkName: "statPage" */ '../pages/question/Stat'))
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
                 element: <Stat />,
             },
         ],
+    },
+    {
+        path: 'test',
+        element: <Text />
     },
 ])
 
