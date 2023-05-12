@@ -1,0 +1,84 @@
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosPromise } from 'axios'
+const SERVER_ERR = '请求服务器的网址错误或网络连接失败'
+
+interface AxiosRequestConfig_ extends AxiosRequestConfig {
+    // isMock 并不存在 AxiosRequestConfig 里面
+    isMock: boolean
+}
+type Method = 'get' | 'post' | 'put' | 'delete' | 'patch'
+const methods: Method[] = ['get', 'post', 'put', 'delete', 'patch']
+type ReqFn = (url: string, isMock: boolean, data?: any) => AxiosPromise<any>
+interface ReqExecute {
+    get: ReqFn
+    post: ReqFn
+    put: ReqFn
+    delete: ReqFn
+    patch: ReqFn
+}
+
+class AxiosUtil {
+    static axiosUtil: AxiosUtil = new AxiosUtil()
+    axiosInstance!: AxiosInstance
+    request!: ReqExecute
+    constructor() {
+        this.request = {
+            get: (): any => { },
+            post: (): any => { },
+            delete: (): any => { },
+            patch: (): any => { },
+            put: (): any => { }
+        }
+        this.createAxiosInstance()
+        this.beforeReqIntercpt()
+        this.beforeResponseIntercpt()
+        this.reqPrepare()
+    }
+    createAxiosInstance() {
+        this.axiosInstance = axios.create({
+            timeout: 150000,
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+                // 'Content-Type': 'application/json;charset=utf-8'
+            }
+        })
+    }
+    /** 1.请求开始之前的请求拦截 */
+    beforeReqIntercpt() {
+        this.axiosInstance.interceptors.request.use((request) => {
+            return request
+        })
+    }
+    /** 2.数据响应之前的响应拦截器 */
+    beforeResponseIntercpt() {
+        this.axiosInstance.interceptors.response.use(
+            (response) => {
+                console.log('response', response)
+                return response
+            },
+            (err) => {
+                throw new Error(err.message || SERVER_ERR)
+            }
+        )
+    }
+    /** 3.发送请求给服务器 get post put delete patch */
+    sendRequest(options: AxiosRequestConfig_) {
+        this.axiosInstance.defaults.baseURL = '/api'
+        return this.axiosInstance(options) // 返回一个 AxiosPromise<any> 对象
+    }
+    /** 4.深入灵活应用 TS 完成请求method类型自动提示*/
+    reqPrepare() {
+        return methods.forEach((method) => {
+            this.request[method] = (url, isMock, data) => {
+                return this.sendRequest({
+                    url,
+                    isMock,
+                    method,
+                    data
+                })
+            }
+        })
+    }
+}
+
+export default AxiosUtil.axiosUtil.request
