@@ -1,15 +1,20 @@
+import { AxiosResponse } from 'axios'
 import request from '../utils/axiosUtil'
 
 enum Api {
-    Register = '/user/register'
+  Register = '/user/register',
 }
 
 type RegisterServiceParams = {
-    username: string
-    password: string
-    nickname: string
+  username: string
+  password: string
+  nickname: string
 }
 
-export const registerService = async ({ username, password, nickname }: RegisterServiceParams) => {
-    return await request.post(Api.Register, false, { username, password, nickname: nickname || username })
+export const registerService = ({ username, password, nickname }: RegisterServiceParams) => {
+  return request.post(Api.Register, false, {
+    username,
+    password,
+    nickname: nickname || username,
+  })
 }

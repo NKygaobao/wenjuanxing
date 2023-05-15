@@ -14,7 +14,7 @@ export function getLocalStorage<T>(key: string, defaultValue?: T): T | undefined
         if (serializedValue == null) {
             return defaultValue
         } else {
-            return JSON.stringify(serializedValue) as T
+            return JSON.parse(serializedValue) as T
         }
     } catch (error) {
         console.error(`Error getting localStorage key "${key}": `, error);
