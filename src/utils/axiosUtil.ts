@@ -14,7 +14,7 @@ type ResType = {
   data?: ResDataType
   msg?: string
 }
-type ResDataType = {
+export type ResDataType = {
   [key: string]: any
 }
 interface ReqExecute {
@@ -63,6 +63,8 @@ class AxiosUtil {
     this.axiosInstance.interceptors.response.use(
       response => {
         const resData = (response.data || {}) as ResType
+        console.log(resData)
+
         const { errno, data, msg } = resData
         if (errno !== 0) {
           if (msg) {

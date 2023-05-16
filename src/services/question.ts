@@ -1,8 +1,9 @@
 import { AxiosResponse } from 'axios'
-import request from '../utils/axiosUtil'
+import request, { ResDataType } from '../utils/axiosUtil'
 
 enum Api {
-  GetQuestionService = '/api/question/',
+  GetQuestionService = 'question/',
+  CreateQuestion = 'question/',
 }
 
 type RegisterServiceParams = {
@@ -11,6 +12,11 @@ type RegisterServiceParams = {
   nickname: string
 }
 
-export const getQuestionService = (id: number) => {
+// 获取单个问卷信息
+export const getQuestionService = (id: number | string) => {
   return request.get(`${Api.GetQuestionService}/${id}`, false)
+}
+// 创建问卷
+export const createQuestionService = async () => {
+  return (await request.post(Api.CreateQuestion, false)) as ResDataType
 }
