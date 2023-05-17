@@ -1,37 +1,19 @@
 import React, { FC, useState } from 'react'
 import { useTitle } from 'ahooks'
-import { Empty, Typography, Table, Tag, Button, Space, Modal } from 'antd'
+import { Empty, Typography, Table, Tag, Button, Space, Modal, Spin } from 'antd'
 import styles from './common.module.scss'
 import ListSearch from '../../components/ListSearch'
 
-import {
-  ExclamationCircleFilled,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import useLoadQuestionListData from '../../hooks/useLoadQuestionListData'
 const { confirm } = Modal
 const { Title } = Typography
-const rawQuestionList = [
-  {
-    _id: 'q1',
-    title: '问卷1',
-    isPublished: false,
-    isStart: true,
-    answerCount: 4,
-    createdAt: '2月10 12:22',
-  },
-  {
-    _id: 'q2',
-    title: '问卷2',
-    isPublished: true,
-    isStart: true,
-    answerCount: 4,
-    createdAt: '1月10 12:22',
-  },
-]
 
 const Trash: FC = () => {
   useTitle('问卷 - 回收站')
-  const [questionList, setQuestionList] = useState(rawQuestionList)
+  const { data = {}, loading } = useLoadQuestionListData({ isDeleted: true })
+  const { list } = data
+
   // 记录选中的id
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const tableColumns = [
@@ -81,13 +63,13 @@ const Trash: FC = () => {
         </Button>
       </Space>
       <Table
-        dataSource={questionList}
+        dataSource={list}
         columns={tableColumns}
         pagination={false}
-        rowKey={(q) => q._id}
+        rowKey={q => q._id}
         rowSelection={{
           type: 'checkbox',
-          onChange: (selectedRowkeys) => {
+          onChange: selectedRowkeys => {
             setSelectedIds(selectedRowkeys as string[])
           },
         }}
@@ -105,8 +87,15 @@ const Trash: FC = () => {
         </div>
       </div>
       <div className={styles.content}>
-        {questionList.length === 0 && <Empty description="暂无数据" />}
-        {questionList.length > 0 && tableElem}
+        <div>
+          {loading && (
+            <div style={{ textAlign: 'center' }}>
+              <Spin />
+            </div>
+          )}
+        </div>
+        {!loading && list.length === 0 && <Empty description="暂无数据" />}
+        {!loading && list.length > 0 && tableElem}
       </div>
     </>
   )

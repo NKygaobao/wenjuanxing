@@ -8,7 +8,7 @@ interface AxiosRequestConfig_ extends AxiosRequestConfig {
 }
 type Method = 'get' | 'post' | 'put' | 'delete' | 'patch'
 const methods: Method[] = ['get', 'post', 'put', 'delete', 'patch']
-type ReqFn = (url: string, isMock: boolean, data?: any) => AxiosPromise<any>
+type ReqFn = (url: string, isMock: boolean, data?: any, params?: any) => AxiosPromise<any>
 type ResType = {
   errno: number
   data?: ResDataType
@@ -87,13 +87,19 @@ class AxiosUtil {
   /** 4.深入灵活应用 TS 完成请求method类型自动提示*/
   reqPrepare() {
     return methods.forEach(method => {
-      this.request[method] = (url, isMock, data) => {
-        return this.sendRequest({
+      this.request[method] = (url, isMock, data, params) => {
+        const config = {
           url,
           isMock,
           method,
           data,
-        })
+          params,
+        }
+        if (method === 'get') {
+          config.params = data
+          delete config.data
+        }
+        return this.sendRequest(config)
       }
     })
   }

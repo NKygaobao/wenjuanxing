@@ -16,14 +16,14 @@ type PropsType = {
   _id: string
   title: string
   isPublished: boolean
-  isStart: boolean
+  isStar: boolean
   answerCount: number
   createdAt: string
 }
 
 const QuestionCard: FC<PropsType> = (props: PropsType) => {
   const nav = useNavigate()
-  const { _id, title, createdAt, answerCount, isPublished, isStart } = props
+  const { _id, title, createdAt, answerCount, isPublished, isStar } = props
 
   const deleteQuestion = () => {}
   const onDel = () => {
@@ -42,7 +42,7 @@ const QuestionCard: FC<PropsType> = (props: PropsType) => {
             to={isPublished ? `/question/stat/${_id}` : `/question/edit/${_id}`}
           >
             <Space>
-              {isStart && <StarOutlined style={{ color: 'red' }} />}
+              {isStar && <StarOutlined style={{ color: 'red' }} />}
               {title}
             </Space>
           </Link>
@@ -92,7 +92,7 @@ const QuestionCard: FC<PropsType> = (props: PropsType) => {
         <div className={styles.right}>
           <Space>
             <Button type="text" icon={<StarOutlined />} size="small">
-              {isStart ? '取消标星' : '标星'}
+              {isStar ? '取消标星' : '标星'}
             </Button>
             <Popconfirm
               title="确定复制该问卷？"
