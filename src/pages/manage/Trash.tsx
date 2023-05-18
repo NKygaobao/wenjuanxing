@@ -6,13 +6,14 @@ import ListSearch from '../../components/ListSearch'
 
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import useLoadQuestionListData from '../../hooks/useLoadQuestionListData'
+import ListPage from '../../components/ListPage'
 const { confirm } = Modal
 const { Title } = Typography
 
 const Trash: FC = () => {
   useTitle('问卷 - 回收站')
   const { data = {}, loading } = useLoadQuestionListData({ isDeleted: true })
-  const { list } = data
+  const { list, total } = data
 
   // 记录选中的id
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -96,6 +97,9 @@ const Trash: FC = () => {
         </div>
         {!loading && list.length === 0 && <Empty description="暂无数据" />}
         {!loading && list.length > 0 && tableElem}
+      </div>
+      <div className={styles.footer}>
+        <ListPage total={total} />
       </div>
     </>
   )

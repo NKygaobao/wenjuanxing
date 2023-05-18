@@ -1,14 +1,15 @@
 import React, { FC, useState } from 'react'
 import styles from './common.module.scss'
-import { Typography, Empty, Spin } from 'antd'
+import { Typography, Empty, Spin, Pagination } from 'antd'
 import QuestionCard from '../../components/QuestionCard'
 import ListSearch from '../../components/ListSearch'
 import useLoadQuestionListData from '../../hooks/useLoadQuestionListData'
+import ListPage from '../../components/ListPage'
 const { Title } = Typography
 
 const Star: FC = () => {
   const { data = {}, loading } = useLoadQuestionListData({ isStar: true })
-  const { list } = data
+  const { list, total } = data
   return (
     <>
       <div className={styles.header}>
@@ -20,7 +21,7 @@ const Star: FC = () => {
         </div>
       </div>
       <div className={styles.content}>
-      {!loading && list.length === 0 && <Empty description="暂无数据" />}
+        {!loading && list.length === 0 && <Empty description="暂无数据" />}
         <div>
           {loading && (
             <div style={{ textAlign: 'center' }}>
@@ -34,7 +35,11 @@ const Star: FC = () => {
             return <QuestionCard key={question._id} {...question}></QuestionCard>
           })}
       </div>
-      <div className={styles.footer}>footer</div>
+      {!loading && (
+        <div className={styles.footer}>
+          <ListPage total={total} />
+        </div>
+      )}
     </>
   )
 }
