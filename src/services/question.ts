@@ -4,6 +4,9 @@ import request, { ResDataType } from '../utils/axiosUtil'
 enum Api {
   GetQuestionService = 'question/',
   CreateQuestion = 'question/',
+  UpdateQuestion = 'question/',
+  DeleteQuestions = 'question',
+  Duplicate = 'question/duplicate/',
 }
 
 type SearchOption = {
@@ -29,5 +32,17 @@ export const createQuestionService = async () => {
 }
 // 查询问卷列表
 export const getQuestionListService = async (params: Partial<SearchOption> = {}) => {
-  return await request.get(`${Api.GetQuestionService}`, false, params) as ResDataType
+  return (await request.get(`${Api.GetQuestionService}`, false, params)) as ResDataType
+}
+
+export const updateQuestionService = async (id: string, opt: { [key: string]: any }) => {
+  return (await request.patch(`${Api.UpdateQuestion}/${id}`, false, opt)) as ResDataType
+}
+
+export const duplicateQuestionService = async (id: string) => {
+  return (await request.post(`${Api.Duplicate}/${id}`, false)) as ResDataType
+}
+
+export const deleteQuestionsService = async (ids: string[]) => {
+  return (await request.post(`${Api.DeleteQuestions}`, false, { data: { ids } })) as ResDataType
 }

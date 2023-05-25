@@ -2,9 +2,12 @@ import React, { FC, useEffect, useState } from 'react'
 import { Typography, Space, Form, Input, Button, Checkbox, message } from 'antd'
 import styles from './Login.module.scss'
 import { UserAddOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
-import { REGISTER_PATHNAME } from '../router'
+import { Link, useNavigate } from 'react-router-dom'
+import { MANAGE_INDEX_PATHNAME, REGISTER_PATHNAME } from '../router'
 import { setLocalStorage, removeLocalStorage, getLocalStorage } from '../utils/localStorage'
+import { useRequest } from 'ahooks'
+import { loginService } from '../services/user'
+import { USER_TOKEN } from '../constant'
 const { Title } = Typography
 
 const USER_NAME_PWD = 'USER_NAME_PWD'
@@ -19,15 +22,39 @@ const getUserInfoFromStorage = () => {
 }
 
 const Login: FC = () => {
+  const nav = useNavigate()
+
   useEffect(() => {
-    const { username, password } = getUserInfoFromStorage()
+    const { username = '', password = '' } = getUserInfoFromStorage() || {}
     console.log(username, password)
 
     form.setFieldsValue({ username, password })
   }, [])
+
   const [form] = Form.useForm()
+
+  const { run } = useRequest(
+    async (username: string, password: string) => {
+      const data = await loginService(username, password)
+      return data
+    },
+    {
+      manual: true,
+      onSuccess(result) {
+        const { token = '' } = result
+        setLocalStorage(USER_TOKEN, token)
+        message.success('登录成功')
+        nav(MANAGE_INDEX_PATHNAME) // 导航到我的问卷
+      },
+    }
+  )
+
   const onFinish = (values: any) => {
-    if (values.remember) {
+    const { username, password, remember } = values || {}
+
+    run(username, password)
+
+    if (remember) {
       rememberUser(values)
     } else {
       deleteUserFromStorage()

@@ -1,5 +1,7 @@
 import { message } from 'antd'
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosPromise } from 'axios'
+import { USER_TOKEN } from '../constant'
+import { getLocalStorage } from './localStorage'
 const SERVER_ERR = '请求服务器的网址错误或网络连接失败'
 
 interface AxiosRequestConfig_ extends AxiosRequestConfig {
@@ -54,9 +56,13 @@ class AxiosUtil {
   }
   /** 1.请求开始之前的请求拦截 */
   beforeReqIntercpt() {
-    this.axiosInstance.interceptors.request.use(request => {
-      return request
-    })
+    this.axiosInstance.interceptors.request.use(
+      request => {
+        request.headers['Authorization'] = `Bearer ${getLocalStorage(USER_TOKEN)}` // JWT 的固定格式
+        return request
+      },
+      error => Promise.reject(error)
+    )
   }
   /** 2.数据响应之前的响应拦截器 */
   beforeResponseIntercpt() {

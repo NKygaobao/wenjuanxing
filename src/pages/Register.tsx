@@ -2,32 +2,32 @@ import React, { FC, useState } from 'react'
 import { Typography, Space, Form, Input, Button, message } from 'antd'
 import styles from './Register.module.scss'
 import { UserAddOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { registerService } from '../services/user'
 import { LOGIN_PATHNAME } from '../router'
 import { AxiosResponse } from 'axios'
+import { useRequest } from 'ahooks'
 
 const { Title } = Typography
 
 const Register: FC = () => {
-  type ShopCart = {
-    userid: number
-    checked: boolean
-    shopcartid?: number
-    bookisbn: string
-    bookname: string
-    bookpicname: string
-    bookprice: number
-    purcharsenum: number
-    [keyof: string]: any
-  }
-
-  const onFinish = async (values: any) => {
-    try {
-      await registerService(values)
-    } catch (error) {
-      console.log(error)
+  const nav = useNavigate()
+  const { run } = useRequest(
+    async values => {
+      const data = await registerService(values)
+      return data
+    },
+    {
+      manual: true,
+      onSuccess() {
+        message.success('注册成功')
+        nav(LOGIN_PATHNAME)
+      },
+      onError() {},
     }
+  )
+  const onFinish = async (values: any) => {
+    run(values)
   }
   return (
     <div className={styles.container}>
